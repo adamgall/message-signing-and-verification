@@ -2,7 +2,7 @@ import MessageSignVerify from "./MessageSignVerify";
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <h1>Web3 Wallet Connection and Message Signing</h1>
       <h2>
         <w3m-button />
