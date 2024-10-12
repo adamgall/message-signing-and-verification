@@ -1,16 +1,16 @@
 import { useWalletClient } from "wagmi";
 import { Account, Chain, Transport, WalletClient } from "viem";
-import { Action } from "./App";
+import { Action } from "./MessageSignVerify";
 
 interface Props {
   state: {
     inputMessage: string;
     signing: boolean;
   };
-  dispatch: React.Dispatch<Action>; // Use the imported Action type
+  dispatch: React.Dispatch<Action>;
 }
 
-function MessageSigning({ state, dispatch }: Props) {
+function SignMessage({ state, dispatch }: Props) {
   const { data: walletClient } = useWalletClient();
 
   const signMessage = async (
@@ -36,7 +36,7 @@ function MessageSigning({ state, dispatch }: Props) {
 
   return (
     <div>
-      <h2>Message Signing</h2>
+      <h2>Sign Message</h2>
       <div>
         <div>
           <input
@@ -45,7 +45,7 @@ function MessageSigning({ state, dispatch }: Props) {
             onChange={(e) =>
               dispatch({ type: "SET_INPUT_MESSAGE", payload: e.target.value })
             }
-            placeholder="Enter message to sign"
+            placeholder="Message"
           />
         </div>
         <div>
@@ -64,4 +64,4 @@ function MessageSigning({ state, dispatch }: Props) {
   );
 }
 
-export default MessageSigning;
+export default SignMessage;

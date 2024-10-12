@@ -16,7 +16,7 @@ interface Props {
   address: string;
 }
 
-const SignatureVerification = ({ message, signature, address }: Props) => {
+const VerifySignature = ({ message, signature, address }: Props) => {
   const publicClient = usePublicClient();
   const [verificationResult, setVerificationResult] = useState<boolean | null>(
     null
@@ -46,17 +46,12 @@ const SignatureVerification = ({ message, signature, address }: Props) => {
 
   return (
     <div>
-      <h2>Signature Verification</h2>
+      <h2>Verify Signature</h2>
       <div>
         <input type="text" value={message} readOnly placeholder="Message" />
       </div>
       <div>
-        <input
-          type="text"
-          value={signature}
-          readOnly
-          placeholder="Signature (hex)"
-        />
+        <input type="text" value={signature} readOnly placeholder="Signature" />
       </div>
       <div>
         <input type="text" value={address} readOnly placeholder="Address" />
@@ -87,4 +82,4 @@ const SignatureVerification = ({ message, signature, address }: Props) => {
   );
 };
 
-export default SignatureVerification;
+export default VerifySignature;
