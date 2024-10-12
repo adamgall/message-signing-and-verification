@@ -12,11 +12,9 @@ function MessageSignVerify() {
   const [signingInputState, setSigningInputState] = useState(
     initialSigningInputState
   );
-
   const [verificationInputState, setVerificationInputState] = useState(
     initialVerificationInputState
   );
-
   const [resultsState, setResultsState] = useState(initialResultsState);
 
   return (

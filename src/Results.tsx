@@ -25,6 +25,8 @@ function Results({
   setVerificationInputState,
   setResultsState,
 }: Props) {
+  const { message, signature, address, verified } = resultsState;
+
   const resetDisabled =
     JSON.stringify(signingInputState) ===
       JSON.stringify(initialSigningInputState) &&
@@ -35,15 +37,14 @@ function Results({
   return (
     <div>
       <h3>Results</h3>
-      {resultsState.verified === null && <p>n/a</p>}
-      {resultsState.verified !== null && (
+      {verified === null && <p>n/a</p>}
+      {verified !== null && (
         <>
-          <p>{resultsState.verified ? "YUP ✅" : "NOPE ❌"}</p>
+          <p>{verified ? "YUP ✅" : "NOPE ❌"}</p>
           <p>
-            "<i>{resultsState.address}</i>"{" "}
-            <b>{resultsState.verified ? "DID" : "DID NOT"}</b> sign message "
-            <i>{resultsState.message}</i>" which resulted in signature "
-            <i>{resultsState.signature}</i>"
+            The signature "<i>{signature}</i>"{" "}
+            <b>{verified ? "WAS" : "WAS NOT"}</b> generated from address "
+            <i>{address}</i>" signing message "<i>{message}</i>"
           </p>
         </>
       )}

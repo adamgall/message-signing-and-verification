@@ -19,9 +19,12 @@ function SignMessage({
   setSigningInputState,
   setVerificationInputState,
 }: Props) {
-  const { data: walletClient } = useWalletClient();
+  const { message } = signingInputState;
 
+  const { data: walletClient } = useWalletClient();
   const [signing, setSigning] = useState(false);
+
+  const isFormValid = walletClient && message && !signing;
 
   const signMessage = async (
     walletClient: WalletClient<Transport, Chain, Account>,
@@ -44,15 +47,13 @@ function SignMessage({
     }
   };
 
-  const isFormValid = walletClient && signingInputState.message && !signing;
-
   return (
     <div>
       <h2>Sign Message</h2>
       <p>
         <input
           type="text"
-          value={signingInputState.message}
+          value={message}
           onChange={(e) =>
             setSigningInputState({
               ...signingInputState,
@@ -64,9 +65,7 @@ function SignMessage({
       </p>
       <button
         disabled={!isFormValid}
-        onClick={() =>
-          isFormValid && signMessage(walletClient, signingInputState.message)
-        }
+        onClick={() => isFormValid && signMessage(walletClient, message)}
       >
         {signing ? "Signing..." : "Sign Message"}
       </button>

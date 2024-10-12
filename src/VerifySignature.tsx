@@ -1,7 +1,16 @@
 import { usePublicClient } from "wagmi";
-import { isAddress, isHex } from "viem";
+import {
+  Address,
+  Chain,
+  Hex,
+  isAddress,
+  isHex,
+  PublicClient,
+  Transport,
+} from "viem";
 import {
   initialResultsState,
+  initialVerificationInputState,
   ResultsState,
   VerificationInputState,
 } from "./types";
@@ -18,36 +27,36 @@ const VerifySignature = ({
   setVerificationInputState,
   setResultsState,
 }: Props) => {
-  const publicClient = usePublicClient();
+  const { message, signature, address } = verificationInputState;
 
+  const publicClient = usePublicClient();
   const [verifying, setVerifying] = useState(false);
 
   const isFormValid =
     publicClient &&
-    verificationInputState.message &&
-    isHex(verificationInputState.signature) &&
-    isAddress(verificationInputState.address) &&
+    message &&
+    isHex(signature) &&
+    isAddress(address) &&
     !verifying;
 
-  const handleVerify = async () => {
-    if (
-      !publicClient ||
-      !isHex(verificationInputState.signature) ||
-      !isAddress(verificationInputState.address)
-    ) {
-      return;
-    }
-    setResultsState(initialResultsState);
+  const handleVerify = async (
+    publicClient: PublicClient<Transport, Chain>,
+    message: string,
+    signature: Hex,
+    address: Address
+  ) => {
     setVerifying(true);
+    setResultsState(initialResultsState);
     const verified = await publicClient.verifyMessage({
-      message: verificationInputState.message,
-      signature: verificationInputState.signature,
-      address: verificationInputState.address,
+      message,
+      signature,
+      address,
     });
+    setVerificationInputState(initialVerificationInputState);
     setResultsState({
-      message: verificationInputState.message,
-      signature: verificationInputState.signature,
-      address: verificationInputState.address,
+      message,
+      signature,
+      address,
       verified,
     });
     setVerifying(false);
@@ -59,7 +68,7 @@ const VerifySignature = ({
       <p>
         <input
           type="text"
-          value={verificationInputState.message}
+          value={message}
           onChange={(e) =>
             setVerificationInputState({
               ...verificationInputState,
@@ -70,7 +79,7 @@ const VerifySignature = ({
         />
         <input
           type="text"
-          value={verificationInputState.signature}
+          value={signature}
           onChange={(e) =>
             setVerificationInputState({
               ...verificationInputState,
@@ -81,7 +90,7 @@ const VerifySignature = ({
         />
         <input
           type="text"
-          value={verificationInputState.address}
+          value={address}
           onChange={(e) =>
             setVerificationInputState({
               ...verificationInputState,
@@ -91,7 +100,12 @@ const VerifySignature = ({
           placeholder="Address"
         />
       </p>
-      <button onClick={handleVerify} disabled={!isFormValid}>
+      <button
+        disabled={!isFormValid}
+        onClick={() =>
+          isFormValid && handleVerify(publicClient, message, signature, address)
+        }
+      >
         {verifying ? "Verifying..." : "Verify Signature"}
       </button>
     </div>
