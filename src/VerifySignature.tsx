@@ -48,24 +48,19 @@ const VerifySignature = ({ message, signature, address }: Props) => {
     <div>
       <h2>Verify Signature</h2>
       <div>
-        <input type="text" value={message} readOnly placeholder="Message" />
+        <input type="text" value={message} placeholder="Message" />
       </div>
       <div>
-        <input type="text" value={signature} readOnly placeholder="Signature" />
+        <input type="text" value={signature} placeholder="Signature" />
       </div>
       <div>
-        <input type="text" value={address} readOnly placeholder="Address" />
+        <input type="text" value={address} placeholder="Address" />
       </div>
       <div>
         <button
           onClick={() =>
             isFormValid &&
-            handleVerify(
-              publicClient,
-              message,
-              signature as Hex,
-              address as Address
-            )
+            handleVerify(publicClient, message, signature, address)
           }
           disabled={!isFormValid}
         >
