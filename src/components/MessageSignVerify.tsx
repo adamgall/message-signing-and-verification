@@ -6,7 +6,7 @@ import {
   initialSigningInputState,
   initialVerificationInputState,
   initialResultsState,
-} from "./types";
+} from "../types";
 
 function MessageSignVerify() {
   const [signingInputState, setSigningInputState] = useState(

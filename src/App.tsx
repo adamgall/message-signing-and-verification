@@ -1,4 +1,4 @@
-import MessageSignVerify from "./MessageSignVerify";
+import MessageSignVerify from "./components/MessageSignVerify";
 
 function App() {
   return (

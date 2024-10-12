@@ -13,7 +13,7 @@ import {
   initialVerificationInputState,
   ResultsState,
   VerificationInputState,
-} from "./types";
+} from "../types";
 import { useState, Dispatch, SetStateAction } from "react";
 
 interface Props {

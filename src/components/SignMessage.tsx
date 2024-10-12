@@ -6,7 +6,7 @@ import {
   VerificationInputState,
   initialSigningInputState,
   initialVerificationInputState,
-} from "./types";
+} from "../types";
 
 interface Props {
   signingInputState: SigningInputState;
