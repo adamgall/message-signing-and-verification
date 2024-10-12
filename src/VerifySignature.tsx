@@ -1,21 +1,26 @@
 import { usePublicClient } from "wagmi";
 import { isAddress, isHex } from "viem";
-import { VerificationInputState } from "./types";
+import {
+  initialResultsState,
+  ResultsState,
+  VerificationInputState,
+} from "./types";
 import { useState, Dispatch, SetStateAction } from "react";
 
 interface Props {
   verificationInputState: VerificationInputState;
   setVerificationInputState: Dispatch<SetStateAction<VerificationInputState>>;
+  setResultsState: Dispatch<SetStateAction<ResultsState>>;
 }
 
 const VerifySignature = ({
   verificationInputState,
   setVerificationInputState,
+  setResultsState,
 }: Props) => {
   const publicClient = usePublicClient();
 
   const [verifying, setVerifying] = useState(false);
-  const [result, setResult] = useState<boolean | null>(null);
 
   const isFormValid =
     publicClient &&
@@ -32,14 +37,14 @@ const VerifySignature = ({
     ) {
       return;
     }
-    setResult(null);
+    setResultsState(initialResultsState);
     setVerifying(true);
     const verified = await publicClient.verifyMessage({
       message: verificationInputState.message,
       signature: verificationInputState.signature,
       address: verificationInputState.address,
     });
-    setResult(verified);
+    setResultsState({ results: verified });
     setVerifying(false);
   };
 
@@ -90,10 +95,6 @@ const VerifySignature = ({
           {verifying ? "Verifying..." : "Verify Signature"}
         </button>
       </div>
-
-      {result !== null && (
-        <p>{result ? "Signature is valid!" : "Signature is invalid."}</p>
-      )}
     </div>
   );
 };

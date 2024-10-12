@@ -1,15 +1,25 @@
 import { useWalletClient } from "wagmi";
 import { Account, Chain, Transport, WalletClient } from "viem";
 import { Dispatch, SetStateAction, useState } from "react";
-import { VerificationInputState, initialVerificationInputState } from "./types";
+import {
+  SigningInputState,
+  VerificationInputState,
+  initialVerificationInputState,
+} from "./types";
 
 interface Props {
+  signingInputState: SigningInputState;
+  setSigningInputState: Dispatch<SetStateAction<SigningInputState>>;
   setVerificationInputState: Dispatch<SetStateAction<VerificationInputState>>;
 }
 
-function SignMessage({ setVerificationInputState }: Props) {
+function SignMessage({
+  signingInputState,
+  setSigningInputState,
+  setVerificationInputState,
+}: Props) {
   const { data: walletClient } = useWalletClient();
-  const [message, setMessage] = useState("");
+
   const [signing, setSigning] = useState(false);
 
   const signMessage = async (
@@ -32,7 +42,7 @@ function SignMessage({ setVerificationInputState }: Props) {
     }
   };
 
-  const isFormValid = walletClient && message && !signing;
+  const isFormValid = walletClient && signingInputState.message && !signing;
 
   return (
     <div>
@@ -41,15 +51,23 @@ function SignMessage({ setVerificationInputState }: Props) {
         <div>
           <input
             type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            value={signingInputState.message}
+            onChange={(e) =>
+              setSigningInputState({
+                ...signingInputState,
+                message: e.target.value,
+              })
+            }
             placeholder="Message"
           />
         </div>
         <div>
           <button
             disabled={!isFormValid}
-            onClick={() => isFormValid && signMessage(walletClient, message)}
+            onClick={() =>
+              isFormValid &&
+              signMessage(walletClient, signingInputState.message)
+            }
           >
             {signing ? "Signing..." : "Sign Message"}
           </button>
