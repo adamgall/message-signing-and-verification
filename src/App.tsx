@@ -1,18 +1,12 @@
 import { useReducer } from "react";
-import { useWalletClient } from "wagmi";
-import {
-  Account,
-  Address,
-  Chain,
-  recoverMessageAddress,
-  WalletActions,
-} from "viem";
+import { usePublicClient, useWalletClient } from "wagmi";
+import { Account, Chain, Transport, WalletClient, PublicClient } from "viem";
 
 interface State {
   inputMessage: string;
   signedMessage: string | null;
   signature: string | null;
-  recoveredAddress: Address | null;
+  verified: boolean | null;
   signing: boolean;
 }
 
@@ -20,7 +14,10 @@ type Action =
   | { type: "BEGIN_NEW_SIGNATURE_REQUEST"; payload: string }
   | {
       type: "CAPTURED_SIGNATURE";
-      payload: { signature: string; recoveredAddress: Address };
+      payload: {
+        signature: string;
+        verified: boolean;
+      };
     }
   | { type: "SET_INPUT_MESSAGE"; payload: string }
   | { type: "SET_SIGNING"; payload: boolean }
@@ -30,7 +27,7 @@ const initialState: State = {
   inputMessage: "",
   signedMessage: null,
   signature: null,
-  recoveredAddress: null,
+  verified: null,
   signing: false,
 };
 
@@ -47,7 +44,7 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         signature: action.payload.signature,
-        recoveredAddress: action.payload.recoveredAddress,
+        verified: action.payload.verified,
         inputMessage: "",
       };
     case "SET_INPUT_MESSAGE":
@@ -62,23 +59,26 @@ const reducer = (state: State, action: Action): State => {
 };
 
 function App() {
+  const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const signMessage = async (
-    walletActions: WalletActions<Chain, Account>,
+    walletClient: WalletClient<Transport, Chain, Account>,
+    publicClient: PublicClient<Transport, Chain>,
     message: string
   ) => {
     dispatch({ type: "BEGIN_NEW_SIGNATURE_REQUEST", payload: message });
     try {
-      const signature = await walletActions.signMessage({ message });
-      const recoveredAddress = await recoverMessageAddress({
+      const signature = await walletClient.signMessage({ message });
+      const verified = await publicClient.verifyMessage({
         message,
         signature,
+        address: walletClient.account.address,
       });
       dispatch({
         type: "CAPTURED_SIGNATURE",
-        payload: { signature, recoveredAddress },
+        payload: { signature, verified },
       });
     } catch (error) {
       console.error("Error signing message:", error);
@@ -97,7 +97,7 @@ function App() {
       <h2>
         <w3m-button />
       </h2>
-      {walletClient && (
+      {publicClient && walletClient && (
         <div>
           <input
             type="text"
@@ -109,7 +109,9 @@ function App() {
           />
           <button
             disabled={!state.inputMessage || state.signing}
-            onClick={() => signMessage(walletClient, state.inputMessage)}
+            onClick={() =>
+              signMessage(walletClient, publicClient, state.inputMessage)
+            }
           >
             Sign Message
           </button>
@@ -118,15 +120,13 @@ function App() {
             <div>
               <h3>Signed Message:</h3>
               <p>{state.signedMessage}</p>
-              <h3>Signature:</h3>
-              <p>{state.signature}</p>
-              <h3>Recovered Address:</h3>
-              <p>{state.recoveredAddress}</p>
               <h3>Wallet Address:</h3>
               <p>{walletClient.account.address}</p>
+              <h3>Signature:</h3>
+              <p>{state.signature}</p>
               <h3>Verification:</h3>
               <p>
-                {state.recoveredAddress === walletClient.account.address
+                {state.verified
                   ? "Signature is valid!"
                   : "Signature is invalid."}
               </p>
