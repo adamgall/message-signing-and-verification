@@ -1,77 +1,67 @@
-import { useState, useEffect } from "react";
 import { usePublicClient } from "wagmi";
-import {
-  Chain,
-  Transport,
-  PublicClient,
-  isAddress,
-  isHex,
-  Hex,
-  Address,
-} from "viem";
+import { isAddress, isHex } from "viem";
+import { State } from "./MessageSignVerify";
+import { useState } from "react";
 
 interface Props {
-  message: string;
-  signature: string;
-  address: string;
+  state: State;
 }
 
-const VerifySignature = ({ message, signature, address }: Props) => {
+const VerifySignature = ({ state }: Props) => {
   const publicClient = usePublicClient();
-  const [verificationResult, setVerificationResult] = useState<boolean | null>(
-    null
-  );
+  const [message, setMessage] = useState("");
+  const [signature, setSignature] = useState("");
+  const [address, setAddress] = useState("");
+  const [result, setResult] = useState<boolean | null>(null);
 
   const isFormValid =
     publicClient && message && isHex(signature) && isAddress(address);
 
-  useEffect(() => {
-    setVerificationResult(null);
-  }, [message, signature, address]);
-
-  const handleVerify = async (
-    publicClient: PublicClient<Transport, Chain>,
-    message: string,
-    signature: Hex,
-    address: Address
-  ) => {
-    setVerificationResult(null);
+  const handleVerify = async () => {
+    if (!isFormValid) return;
     const verified = await publicClient.verifyMessage({
       message,
       signature,
       address,
     });
-    setVerificationResult(verified);
+    setResult(verified);
   };
 
   return (
     <div>
       <h2>Verify Signature</h2>
       <div>
-        <input type="text" value={message} placeholder="Message" />
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Message"
+        />
       </div>
       <div>
-        <input type="text" value={signature} placeholder="Signature" />
+        <input
+          type="text"
+          value={signature}
+          onChange={(e) => setSignature(e.target.value)}
+          placeholder="Signature"
+        />
       </div>
       <div>
-        <input type="text" value={address} placeholder="Address" />
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder="Address"
+        />
       </div>
       <div>
-        <button
-          onClick={() =>
-            isFormValid &&
-            handleVerify(publicClient, message, signature, address)
-          }
-          disabled={!isFormValid}
-        >
+        <button onClick={handleVerify} disabled={!isFormValid}>
           Verify Signature
         </button>
       </div>
 
-      {verificationResult !== null && (
-        <p>
-          {verificationResult ? "Signature is valid!" : "Signature is invalid."}
-        </p>
+      {result !== null && (
+        <p>{result ? "Signature is valid!" : "Signature is invalid."}</p>
       )}
     </div>
   );

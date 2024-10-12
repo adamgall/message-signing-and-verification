@@ -1,38 +1,37 @@
 import { useWalletClient } from "wagmi";
 import { Account, Chain, Transport, WalletClient } from "viem";
-import { Action } from "./MessageSignVerify";
+import { Dispatch, SetStateAction, useState } from "react";
+import { State } from "./MessageSignVerify";
 
 interface Props {
-  state: {
-    inputMessage: string;
-    signing: boolean;
-  };
-  dispatch: React.Dispatch<Action>;
+  setState: Dispatch<SetStateAction<State>>;
 }
 
-function SignMessage({ state, dispatch }: Props) {
+function SignMessage({ setState }: Props) {
   const { data: walletClient } = useWalletClient();
+  const [message, setMessage] = useState("");
+  const [signing, setSigning] = useState(false);
 
   const signMessage = async (
     walletClient: WalletClient<Transport, Chain, Account>,
     message: string
   ) => {
-    dispatch({
-      type: "BEGIN_NEW_SIGNATURE_REQUEST",
-      payload: { message, walletAddress: walletClient.account.address },
-    });
+    setSigning(true);
     try {
       const signature = await walletClient.signMessage({ message });
-      dispatch({
-        type: "CAPTURED_SIGNATURE",
-        payload: signature,
+      setState({
+        message,
+        signature,
+        address: walletClient.account.address,
       });
     } catch (error) {
       console.error("Error signing message:", error);
+    } finally {
+      setSigning(false);
     }
   };
 
-  const isFormValid = walletClient && state.inputMessage && !state.signing;
+  const isFormValid = walletClient && message && !signing;
 
   return (
     <div>
@@ -41,24 +40,20 @@ function SignMessage({ state, dispatch }: Props) {
         <div>
           <input
             type="text"
-            value={state.inputMessage}
-            onChange={(e) =>
-              dispatch({ type: "SET_INPUT_MESSAGE", payload: e.target.value })
-            }
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             placeholder="Message"
           />
         </div>
         <div>
           <button
             disabled={!isFormValid}
-            onClick={() =>
-              isFormValid && signMessage(walletClient, state.inputMessage)
-            }
+            onClick={() => isFormValid && signMessage(walletClient, message)}
           >
             Sign Message
           </button>
         </div>
-        {state.signing && <p>Signing message, please wait...</p>}
+        {signing && <p>Signing message, please wait...</p>}
       </div>
     </div>
   );
