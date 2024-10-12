@@ -10,7 +10,6 @@ import {
 } from "viem";
 import {
   initialResultsState,
-  initialVerificationInputState,
   ResultsState,
   VerificationInputState,
 } from "../types";
@@ -52,7 +51,6 @@ const VerifySignature = ({
       signature,
       address,
     });
-    setVerificationInputState(initialVerificationInputState);
     setResultsState({
       message,
       signature,
