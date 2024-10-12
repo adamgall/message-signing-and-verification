@@ -1,12 +1,12 @@
 import { useState } from "react";
 import SignMessage from "./SignMessage";
 import VerifySignature from "./VerifySignature";
+import Results from "./Results";
 import {
   initialSigningInputState,
   initialVerificationInputState,
   initialResultsState,
 } from "./types";
-import Results from "./Results";
 
 function MessageSignVerify() {
   const [signingInputState, setSigningInputState] = useState(
