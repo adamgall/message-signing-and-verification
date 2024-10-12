@@ -1,18 +1,7 @@
 import { useState } from "react";
 import SignMessage from "./SignMessage";
 import VerifySignature from "./VerifySignature";
-
-export interface VerificationInputState {
-  message: string;
-  signature: string;
-  address: string;
-}
-
-const initialVerificationInputState: VerificationInputState = {
-  message: "",
-  signature: "",
-  address: "",
-};
+import { initialVerificationInputState } from "./types";
 
 function MessageSignVerify() {
   const [verificationInputState, setVerificationInputState] = useState(

@@ -1,6 +1,6 @@
 import { usePublicClient } from "wagmi";
 import { isAddress, isHex } from "viem";
-import { VerificationInputState } from "./MessageSignVerify";
+import { VerificationInputState } from "./types";
 import { useState, Dispatch, SetStateAction } from "react";
 
 interface Props {
@@ -14,13 +14,15 @@ const VerifySignature = ({
 }: Props) => {
   const publicClient = usePublicClient();
 
+  const [verifying, setVerifying] = useState(false);
   const [result, setResult] = useState<boolean | null>(null);
 
   const isFormValid =
     publicClient &&
     verificationInputState.message &&
     isHex(verificationInputState.signature) &&
-    isAddress(verificationInputState.address);
+    isAddress(verificationInputState.address) &&
+    !verifying;
 
   const handleVerify = async () => {
     if (
@@ -30,12 +32,15 @@ const VerifySignature = ({
     ) {
       return;
     }
+    setResult(null);
+    setVerifying(true);
     const verified = await publicClient.verifyMessage({
       message: verificationInputState.message,
       signature: verificationInputState.signature,
       address: verificationInputState.address,
     });
     setResult(verified);
+    setVerifying(false);
   };
 
   return (
@@ -82,7 +87,7 @@ const VerifySignature = ({
       </div>
       <div>
         <button onClick={handleVerify} disabled={!isFormValid}>
-          Verify Signature
+          {verifying ? "Verifying..." : "Verify Signature"}
         </button>
       </div>
 

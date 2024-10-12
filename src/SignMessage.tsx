@@ -1,7 +1,7 @@
 import { useWalletClient } from "wagmi";
 import { Account, Chain, Transport, WalletClient } from "viem";
 import { Dispatch, SetStateAction, useState } from "react";
-import { VerificationInputState } from "./MessageSignVerify";
+import { VerificationInputState, initialVerificationInputState } from "./types";
 
 interface Props {
   setVerificationInputState: Dispatch<SetStateAction<VerificationInputState>>;
@@ -17,6 +17,7 @@ function SignMessage({ setVerificationInputState }: Props) {
     message: string
   ) => {
     setSigning(true);
+    setVerificationInputState(initialVerificationInputState);
     try {
       const signature = await walletClient.signMessage({ message });
       setVerificationInputState({
@@ -50,10 +51,9 @@ function SignMessage({ setVerificationInputState }: Props) {
             disabled={!isFormValid}
             onClick={() => isFormValid && signMessage(walletClient, message)}
           >
-            Sign Message
+            {signing ? "Signing..." : "Sign Message"}
           </button>
         </div>
-        {signing && <p>Signing message, please wait...</p>}
       </div>
     </div>
   );
