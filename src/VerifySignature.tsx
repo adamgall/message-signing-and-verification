@@ -44,14 +44,19 @@ const VerifySignature = ({
       signature: verificationInputState.signature,
       address: verificationInputState.address,
     });
-    setResultsState({ results: verified });
+    setResultsState({
+      message: verificationInputState.message,
+      signature: verificationInputState.signature,
+      address: verificationInputState.address,
+      verified,
+    });
     setVerifying(false);
   };
 
   return (
     <div>
       <h2>Verify Signature</h2>
-      <div>
+      <p>
         <input
           type="text"
           value={verificationInputState.message}
@@ -63,8 +68,6 @@ const VerifySignature = ({
           }
           placeholder="Message"
         />
-      </div>
-      <div>
         <input
           type="text"
           value={verificationInputState.signature}
@@ -76,8 +79,6 @@ const VerifySignature = ({
           }
           placeholder="Signature"
         />
-      </div>
-      <div>
         <input
           type="text"
           value={verificationInputState.address}
@@ -89,12 +90,10 @@ const VerifySignature = ({
           }
           placeholder="Address"
         />
-      </div>
-      <div>
-        <button onClick={handleVerify} disabled={!isFormValid}>
-          {verifying ? "Verifying..." : "Verify Signature"}
-        </button>
-      </div>
+      </p>
+      <button onClick={handleVerify} disabled={!isFormValid}>
+        {verifying ? "Verifying..." : "Verify Signature"}
+      </button>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import {
   SigningInputState,
   VerificationInputState,
+  initialSigningInputState,
   initialVerificationInputState,
 } from "./types";
 
@@ -30,6 +31,7 @@ function SignMessage({
     setVerificationInputState(initialVerificationInputState);
     try {
       const signature = await walletClient.signMessage({ message });
+      setSigningInputState(initialSigningInputState);
       setVerificationInputState({
         message,
         signature,
@@ -47,32 +49,27 @@ function SignMessage({
   return (
     <div>
       <h2>Sign Message</h2>
-      <div>
-        <div>
-          <input
-            type="text"
-            value={signingInputState.message}
-            onChange={(e) =>
-              setSigningInputState({
-                ...signingInputState,
-                message: e.target.value,
-              })
-            }
-            placeholder="Message"
-          />
-        </div>
-        <div>
-          <button
-            disabled={!isFormValid}
-            onClick={() =>
-              isFormValid &&
-              signMessage(walletClient, signingInputState.message)
-            }
-          >
-            {signing ? "Signing..." : "Sign Message"}
-          </button>
-        </div>
-      </div>
+      <p>
+        <input
+          type="text"
+          value={signingInputState.message}
+          onChange={(e) =>
+            setSigningInputState({
+              ...signingInputState,
+              message: e.target.value,
+            })
+          }
+          placeholder="Message"
+        />
+      </p>
+      <button
+        disabled={!isFormValid}
+        onClick={() =>
+          isFormValid && signMessage(walletClient, signingInputState.message)
+        }
+      >
+        {signing ? "Signing..." : "Sign Message"}
+      </button>
     </div>
   );
 }

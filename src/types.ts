@@ -1,3 +1,5 @@
+import { Address, Hex } from "viem";
+
 export interface SigningInputState {
   message: string;
 }
@@ -19,9 +21,15 @@ export const initialVerificationInputState: VerificationInputState = {
 };
 
 export interface ResultsState {
-  results: boolean | null;
+  message: string | null;
+  signature: Hex | null;
+  address: Address | null;
+  verified: boolean | null;
 }
 
 export const initialResultsState: ResultsState = {
-  results: null,
+  message: null,
+  signature: null,
+  address: null,
+  verified: null,
 };

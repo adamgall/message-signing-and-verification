@@ -32,6 +32,8 @@ function MessageSignVerify() {
         setResultsState={setResultsState}
       />
       <Results
+        signingInputState={signingInputState}
+        verificationInputState={verificationInputState}
         resultsState={resultsState}
         setSigningInputState={setSigningInputState}
         setVerificationInputState={setVerificationInputState}
