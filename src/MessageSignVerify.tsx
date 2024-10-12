@@ -1,27 +1,31 @@
 import { useState } from "react";
-import { Address, Hex } from "viem";
 import SignMessage from "./SignMessage";
 import VerifySignature from "./VerifySignature";
 
-export interface State {
-  message: string | null;
-  signature: Hex | null;
-  address: Address | null;
+export interface VerificationInputState {
+  message: string;
+  signature: string;
+  address: string;
 }
 
-const initialState: State = {
-  message: null,
-  signature: null,
-  address: null,
+const initialVerificationInputState: VerificationInputState = {
+  message: "",
+  signature: "",
+  address: "",
 };
 
 function MessageSignVerify() {
-  const [state, setState] = useState(initialState);
+  const [verificationInputState, setVerificationInputState] = useState(
+    initialVerificationInputState
+  );
 
   return (
     <>
-      <SignMessage setState={setState} />
-      <VerifySignature state={state} />
+      <SignMessage setVerificationInputState={setVerificationInputState} />
+      <VerifySignature
+        verificationInputState={verificationInputState}
+        setVerificationInputState={setVerificationInputState}
+      />
     </>
   );
 }

@@ -1,13 +1,13 @@
 import { useWalletClient } from "wagmi";
 import { Account, Chain, Transport, WalletClient } from "viem";
 import { Dispatch, SetStateAction, useState } from "react";
-import { State } from "./MessageSignVerify";
+import { VerificationInputState } from "./MessageSignVerify";
 
 interface Props {
-  setState: Dispatch<SetStateAction<State>>;
+  setVerificationInputState: Dispatch<SetStateAction<VerificationInputState>>;
 }
 
-function SignMessage({ setState }: Props) {
+function SignMessage({ setVerificationInputState }: Props) {
   const { data: walletClient } = useWalletClient();
   const [message, setMessage] = useState("");
   const [signing, setSigning] = useState(false);
@@ -19,7 +19,7 @@ function SignMessage({ setState }: Props) {
     setSigning(true);
     try {
       const signature = await walletClient.signMessage({ message });
-      setState({
+      setVerificationInputState({
         message,
         signature,
         address: walletClient.account.address,
