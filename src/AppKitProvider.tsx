@@ -6,14 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 const queryClient = new QueryClient();
 
-const projectId = "f46ddf1a10706359ffd20ad4ce84fcf2";
-
-const metadata = {
-  name: "AppKit",
-  description: "AppKit Example",
-  url: "https://example.com", // origin must match your domain & subdomain
-  icons: ["https://avatars.githubusercontent.com/u/179229932"],
-};
+const projectId = import.meta.env.VITE_APPKIT_PROJECT_ID;
 
 const networks: [AppKitNetwork, ...AppKitNetwork[]] = [mainnet];
 
@@ -27,7 +20,6 @@ createAppKit({
   adapters: [wagmiAdapter],
   networks,
   projectId,
-  metadata,
   themeMode: "light",
 });
 
